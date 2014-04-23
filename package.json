@@ -1,44 +1,54 @@
 {
-    "name": "url-filter",
-    "version": "0.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "coffee test/index.coffee"
-    },
-    "author": "Tom Hummel",
-    "license": "ISC",
-    "devDependencies": {
-        "browserify": "^3.44.2",
-        "beefy": "^1.1.0",
-        "prova": "^1.5.7",
-        "testling": "^1.6.1"
-    },
-    "dependencies": {
-        "url-tag": "^0.3.0",
-        "coffeeify": "^0.6.0",
-        "coffee-script": "^1.7.1"
-    },
-    "browser": "lib/index.coffee",
-    "browserify": {
-        "transform": [
-            "coffeeify"
-        ]
-    },
-    "testling": {
-        "files": "test/index.coffee",
-        "browsers": [
-            "ie/8..latest",
-            "firefox/17..latest",
-            "firefox/nightly",
-            "chrome/22..latest",
-            "chrome/canary",
-            "opera/12..latest",
-            "opera/next",
-            "safari/5.1..latest",
-            "ipad/6.0..latest",
-            "iphone/6.0..latest",
-            "android-browser/4.2..latest"
-        ]
-    }
+  "name": "url-filter",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "coffee test/index.coffee"
+  },
+  "author": "Tom Hummel",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^3.44.2",
+    "beefy": "^1.1.0",
+    "prova": "^1.5.7",
+    "testling": "^1.6.1"
+  },
+  "dependencies": {
+    "url-tag": "^0.3.0",
+    "coffeeify": "^0.6.0",
+    "coffee-script": "^1.7.1"
+  },
+  "browser": "lib/index.coffee",
+  "browserify": {
+    "transform": [
+      "coffeeify"
+    ]
+  },
+  "testling": {
+    "files": "test/index.coffee",
+    "browsers": [
+      "ie/8..latest",
+      "firefox/17..latest",
+      "firefox/nightly",
+      "chrome/22..latest",
+      "chrome/canary",
+      "opera/12..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2..latest"
+    ]
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Interlincx/url-filter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Interlincx/url-filter/issues"
+  },
+  "homepage": "https://github.com/Interlincx/url-filter"
 }
