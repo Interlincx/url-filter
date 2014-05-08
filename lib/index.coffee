@@ -1,116 +1,42 @@
-Url             = require "url"
-{EventEmitter}  = require "events"
-util            = require "util"
-urlTag          = require "url-tag"
+util = require 'util'
+{EventEmitter}  = require 'events'
+Filter = require './url-filter.coffee'
+List = require './url-list.coffee'
 
-module.exports = UrlFilter = ->
-  @clearCriteria()
+module.exports = UrlFilter = (urls=[]) ->
+  @list = new List urls
+  @filter = new Filter
+
+  @list.on 'resize', (newLen) =>
+    @list.updateMatches (@filter.getMatchIds @list.urls)
+    @emit 'resize', arguments...
+
+  @filter.on 'criteria', =>
+    @list.updateMatches (@filter.getMatchIds @list.urls)
+    @emit 'criteria', arguments...
+
+  @list.on 'match', => @emit 'match', arguments...
+
   return this
 
 util.inherits UrlFilter, EventEmitter
 
-UrlFilter::urlIsMatch = (url) ->
-  return urlTag @criteria, url
+UrlFilter::addCriteria = -> @filter.addCriteria arguments...
+UrlFilter::removeCriteria = -> @filter.removeCriteria arguments...
+UrlFilter::toggleCriteria = -> @filter.toggleCriteria arguments...
+UrlFilter::addPage = -> @filter.addPage arguments...
+UrlFilter::clearCriteria = -> @filter.clearCriteria arguments...
+UrlFilter::checkPathname = -> @filter.checkPathname arguments...
+UrlFilter::checkQuery = -> @filter.checkQuery arguments...
+UrlFilter::getMatchIds = -> @filter.getMatchIds arguments...
 
-UrlFilter::getMatchIds = (urls=[]) ->
-  ids = []
+UrlFilter::groupByPath = -> @list.groupByPath arguments...
+UrlFilter::findById = -> @list.findById arguments...
+UrlFilter::updateMatches = -> @list.updateMatches arguments...
+UrlFilter::getStatusByPath = -> @list.getStatusByPath arguments...
+UrlFilter::dropIds = -> @list.dropIds arguments...
+UrlFilter::matchCount = -> @list.matchCount
+UrlFilter::totalCount = -> @list.totalCount
 
-  hasPathname = @criteria.pathname?
-  hasQuery = @criteria.query? and (Object.keys @criteria.query).length
-
-  return ids unless hasPathname or hasQuery
-
-  for url, i in urls
-    ids.push url.id if @urlIsMatch url
-
-  return ids
-
-UrlFilter::clearCriteria = ->
-  @criteria = pathname: null, query: null
-
-UrlFilter::addPage = (pageSpec) ->
-  for key, val of pageSpec
-    if key is "pathname" and typeof val is "object"
-      for path, v of val
-        @addCriteria key, path, true
-
-    else
-      @addCriteria key, val, true
-
-
-  @emit "criteria", @criteria
-
-UrlFilter::removePage = (pageSpec) ->
-  for key, val of pageSpec
-    @removeCriteria key, val, true
-
-  @emit "criteria", @criteria
-
-UrlFilter::validateType = (type) ->
-  if type not in ["pathname", "query"]
-    throw new Error "type must be 'pathname' or 'query'"
-
-UrlFilter::hasCriteria = (type, value) ->
-  @validateType type
-
-  if type is "pathname"
-    return @checkPathname value
-  else if type is "query"
-    allMatched = true
-    for k,v of value
-      allMatched = false if !@checkQuery k, v 
-
-    return allMatched
-
-UrlFilter::toggleCriteria = (type, value) ->
-  @validateType type
-
-  if @hasCriteria type, value
-    @removeCriteria type, value
-  else
-    @addCriteria type, value
-
-UrlFilter::addCriteria = (type, value, silent=false) ->
-  @validateType type
-
-  if type is "pathname"
-    @criteria.pathname ?= {}
-    @criteria.pathname[value] = true
-
-  else if type is "query"
-    @criteria.query ?= {}
-
-    for k,v of value
-
-      @criteria.query[k] = v
-
-  @emit "criteria", @criteria if !silent 
-
-UrlFilter::removeCriteria = (type, value, silent=false) ->
-  @validateType type
-
-  if type is "pathname"
-    return if !@criteria.pathname
-
-    delete @criteria.pathname[value]
-    if @criteria.pathname? and (Object.keys @criteria.pathname).length is 0
-      @criteria.pathname = null
-
-  else if type is "query"
-    return if !@criteria.query
-
-    for k,v of value
-      delete @criteria.query[k]
-
-    if @criteria.query? and (Object.keys @criteria.query).length is 0
-      @criteria.query = null
-
-  @emit "criteria", @criteria if !silent
-
-UrlFilter::checkPathname = (value) ->
-  return urlTag.testPathname @criteria.pathname, value
-
-UrlFilter::checkQuery = (key, val) ->
-  return false if !@criteria.query
-
-  return @criteria.query[key] is val
+UrlFilter::getCriteria = -> @filter.criteria
+UrlFilter::getUrls = -> @list.urls
